@@ -1,0 +1,89 @@
+======================================================================
+HDB RESALE FLAT PRICES PIPELINE - RUN LOG & COUNT RECONCILIATION
+======================================================================
+Report run at : 2026-09-01 17:14:35 UTC
+Environment   : AWS Account 544795558120, us-east-1
+Source        : data.gov.sg collection 189 (Resale Flat Prices)
+Date scope    : 2012-01-01 to 2016-12-31
+----------------------------------------------------------------------
+STAGE 1 - ingestion_to_source (job_1)
+----------------------------------------------------------------------
+run_id         : 1
+start_time     : 2026-09-01 15:52:32.947900
+end_time       : 2026-09-01 15:53:29.942807
+status         : SUCCEEDED
+rows_landed    : 92,544
+detail         : landed 92544 row(s) across 3 file(s) - source_location=data.gov.sg (collection 189), target_location=s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/
+----------------------------------------------------------------------
+
+STAGE 2 - raw_iceberg (job_2)
+----------------------------------------------------------------------
+run_id         : 4
+start_time     : 2026-09-01 16:01:19.597416
+end_time       : 2026-09-01 16:06:32.338883
+status         : SUCCEEDED
+rows_kept      : 92,544
+rows_rejected  : 0
+reconciliation : 92,544 + 0 = 92,544 - MATCHES ingestion_to_source OK
+----------------------------------------------------------------------
+
+STAGE 2b - profiling (job_2b)
+----------------------------------------------------------------------
+run_id         : 5
+start_time     : 2026-09-01 16:07:16.658916
+end_time       : 2026-09-01 16:07:52.406670
+status         : SUCCEEDED
+rows_profiled  : 92,544
+note           : report-only stage, no row count to reconcile
+----------------------------------------------------------------------
+
+STAGE 3 - cleaned_iceberg (job_3)
+----------------------------------------------------------------------
+run_id         : 6
+start_time     : 2026-09-01 16:07:32.720974
+end_time       : 2026-09-01 16:15:30.865705
+status         : SUCCEEDED
+rows_kept      : 89,641
+rows_rejected  : 2,903
+reconciliation : 89,641 + 2,903 = 92,544 - MATCHES raw_iceberg OK
+reject_breakdown:
+   duplicate_key_lower_price      :   1,595  (54.9%)
+   anomalous_price_iqr_outlier    :   1,307  (45.0%)
+   field_validation_failed        :       1  ( 0.0%)
+----------------------------------------------------------------------
+
+STAGE 4 - transformed_iceberg (job_4)
+----------------------------------------------------------------------
+run_id         : 7
+start_time     : 2026-09-01 16:23:04.720947
+end_time       : 2026-09-01 16:30:15.839321
+status         : SUCCEEDED
+rows_kept      : 76,167
+rows_rejected  : 13,474
+reconciliation : 76,167 + 13,474 = 89,641 - MATCHES cleaned_iceberg OK
+reject_breakdown:
+   duplicate_key_lower_price      :  13,474  (100.0%)
+----------------------------------------------------------------------
+
+STAGE 5 - hashed_iceberg (job_5)
+----------------------------------------------------------------------
+run_id         : 8
+start_time     : 2026-09-01 16:49:37.022231
+end_time       : 2026-09-01 16:56:11.849297
+status         : SUCCEEDED
+rows_kept      : 76,167
+rows_rejected  : 0
+reconciliation : 76,167 + 0 = 76,167 - MATCHES transformed_iceberg OK
+----------------------------------------------------------------------
+
+======================================================================
+END-TO-END COUNT CHAIN
+======================================================================
+92,544 (source) -> 92,544 (raw) -> 89,641 (cleaned) -> 76,167 (transformed) -> 76,167 (hashed)
+Total rows reconciled       : 92,544
+Total rows retained (final) : 76,167  (82.3%)
+Total rows quarantined      : 16,377  (17.7%)
+   - cleaned_iceberg (job_3)      : 2,903
+   - transformed_iceberg (job_4)  : 13,474
+Every stage transition reconciled with ZERO unexplained loss.
+======================================================================

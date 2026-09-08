@@ -1,0 +1,18 @@
+======================================================================
+HDB RESALE FLAT PRICES PIPELINE - RUN LOG & COUNT RECONCILIATION
+======================================================================
+Report run at : 2026-09-03 07:06:52 UTC
+Environment   : AWS Account 544795558120, us-east-1
+Source        : data.gov.sg collection 189 (Resale Flat Prices)
+Date scope    : 2012-01-01 to 2016-12-31
+----------------------------------------------------------------------
+STAGE 1 - ingestion_to_source (job_1)
+----------------------------------------------------------------------
+status         : NOT YET RUN (no pipeline_runs row found for this layer)
+----------------------------------------------------------------------
+
+STOPPED - ingestion_to_source (job_1) has not run yet; nothing downstream can be verified.
+======================================================================
+RESULT: NOT FULLY RECONCILED - stopped at ingestion_to_source (job_1)
+======================================================================
+======================================================================

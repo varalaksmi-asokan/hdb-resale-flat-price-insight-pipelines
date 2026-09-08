@@ -1,0 +1,833 @@
+{
+  "action": "read",
+  "database": "hdb_eventdriven_database",
+  "generated_at": "2026-09-03T00:21:03.098156+00:00",
+  "tables": {
+    "metadata_tables": [
+      {
+        "table_id": "1",
+        "table_name": "resaleflat_price",
+        "source_system": "HDB",
+        "source_schema": null,
+        "source_table": "resaleflat_price",
+        "source_path": "s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/",
+        "target_layer": "gold",
+        "bronze_schema": "raw_iceberg",
+        "silver_schema": "cleaned_iceberg,transformed_iceberg",
+        "gold_schema": "hashed_iceberg",
+        "active_flag": "true",
+        "load_order": "1",
+        "created_at": "2026-09-02 13:47:20.000000"
+      }
+    ],
+    "table_parameters": [
+      {
+        "table_id": "1",
+        "parameter_name": "load_type",
+        "parameter_value": "FULL",
+        "created_at": "2026-09-02 13:47:04.326000"
+      },
+      {
+        "table_id": "1",
+        "parameter_name": "primary_key",
+        "parameter_value": "month,town,flat_type,block,street_name,storey_range,floor_area_sqm,flat_model,lease_commence_date",
+        "created_at": "2026-09-02 13:47:04.326000"
+      },
+      {
+        "table_id": "1",
+        "parameter_name": "lookback_window",
+        "parameter_value": "7",
+        "created_at": "2026-09-02 13:47:04.326000"
+      }
+    ],
+    "table_watermarks": [
+      {
+        "table_id": "6",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-02 12:45:53.307000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "5",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-02 12:45:53.307000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "1",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-02 12:45:53.307000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "2",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-02 12:45:53.307000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "3",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-02 12:45:53.307000",
+        "last_run_id": null
+      }
+    ],
+    "pipeline_runs": [
+      {
+        "run_id": "134223203",
+        "table_id": "1",
+        "layer": "job_3_cleaned_iceberg",
+        "start_time": "2026-09-02 15:51:30.167537",
+        "end_time": "2026-09-02 15:51:30.167537",
+        "status": "SUCCEEDED",
+        "number_of_records": "474",
+        "error_message": null
+      },
+      {
+        "run_id": "363492250",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 18:28:47.766454",
+        "end_time": "2026-09-02 18:28:47.766454",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "134223203",
+        "table_id": "1",
+        "layer": "job_4_transformed_iceberg",
+        "start_time": "2026-09-02 15:53:12.084183",
+        "end_time": "2026-09-02 15:53:12.084183",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": null
+      },
+      {
+        "run_id": "134223203",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 15:48:19.315146",
+        "end_time": "2026-09-02 15:48:19.315146",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": null
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_2b_data_profiling",
+        "start_time": "2026-09-02 17:05:35.554984",
+        "end_time": "2026-09-02 17:05:35.554984",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "277448750",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 15:23:50.288780",
+        "end_time": "2026-09-02 15:23:50.288780",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": null
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 16:51:10.787025",
+        "end_time": "2026-09-02 16:51:10.787025",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "994370849",
+        "table_id": "1",
+        "layer": "hashed_iceberg",
+        "start_time": "2026-09-02 18:35:36.015507",
+        "end_time": "2026-09-02 18:36:28.610162",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "hashed_iceberg: 41 kept = 41, matches transformed_iceberg's recorded 41"
+      },
+      {
+        "run_id": "4",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 15:03:30.391167",
+        "end_time": "2026-09-02 15:03:46.166208",
+        "status": "FAILED",
+        "number_of_records": "0",
+        "error_message": "The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()"
+      },
+      {
+        "run_id": "977054391",
+        "table_id": "1",
+        "layer": "hashed_iceberg",
+        "start_time": "2026-09-02 17:10:34.179576",
+        "end_time": "2026-09-02 17:11:24.943558",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "hashed_iceberg: 41 kept = 41, matches transformed_iceberg's recorded 41"
+      },
+      {
+        "run_id": "1",
+        "table_id": "1",
+        "layer": "ingestion_to_source",
+        "start_time": "2026-09-02 14:58:33.492842",
+        "end_time": "2026-09-02 14:58:54.520750",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "landed 50 row(s) across 1 file(s) - source_location=data.gov.sg (collection 189), target_location=s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/"
+      },
+      {
+        "run_id": "977054370",
+        "table_id": "1",
+        "layer": "job_3_cleaned_iceberg",
+        "start_time": "2026-09-02 15:04:17.122000",
+        "end_time": "2026-09-02 15:04:17.122000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "{\"AllocatedCapacity\":1,\"Attempt\":0,\"CompletedOn\":1788361446726,\"ErrorMessage\":\"ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()\",\"ExecutionTime\":41,\"GlueVersion\":\"5.1\",\"Id\":\"jr_dde162a592938560a9d8725df865b18749e6ce09f226415e4ac1c507660af8b9\",\"JobMode\":\"SCRIPT\",\"JobName\":\"hdb-job-3-cleaned-iceberg\",\"JobRunState\":\"FAILED\",\"LastModifiedOn\":1788361446726,\"LogGroupName\":\"/aws-glue/python-jobs\",\"MaxCapacity\":1.0,\"PredecessorRuns\":[],\"StartedOn\":1788361400974,\"Timeout\":30}"
+      },
+      {
+        "run_id": "977054378",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 15:49:54.249310",
+        "end_time": "2026-09-02 15:50:10.557497",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": "profiled 500 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T154956Z.json"
+      },
+      {
+        "run_id": "977054395",
+        "table_id": "1",
+        "layer": "transformed_iceberg",
+        "start_time": "2026-09-02 17:33:57.741896",
+        "end_time": "2026-09-02 17:34:54.657628",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "transformed_iceberg: 41 kept + 1 rejected = 42, matches cleaned_iceberg's recorded 42"
+      },
+      {
+        "run_id": "977054376",
+        "table_id": "1",
+        "layer": "hashed_iceberg",
+        "start_time": "2026-09-02 15:30:24.426439",
+        "end_time": "2026-09-02 15:31:05.644724",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": "hashed_iceberg: 426 kept = 426, matches transformed_iceberg's recorded 426"
+      },
+      {
+        "run_id": "542301532",
+        "table_id": "1",
+        "layer": "SendSuccessEmail",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 17:17:43.855000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "An error occurred while executing the state 'SendSuccessEmail' (entered at the event id #76). The function 'States.Format('<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;background:#f5f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a2233;\"><div style=\"max-width:640px;margin:0 auto;padding:32px 20px;\"><div style=\"font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#5b6472;margin-bottom:8px;\">HDB Pipeline Run - SUCCESS</div><h1 style=\"font-size:22px;font-weight:700;margin:0 0 6px;color:#1a2233;\">Resale Flat Prices ETL - run completed</h1><p style=\"color:#5b6472;font-size:14px;margin:0 0 20px;\">All 6 steps ran cleanly: ingestion, raw, data profiling, cleaned, transformed, hashed.</p><div style=\"background:#ffffff;border:1px solid #dde2e8;border-radius:8px;padding:16px 18px;margin-bottom:16px;\"><div style=\"font-size:13px;font-weight:700;margin-bottom:4px;color:#1a2233;\">Run summary</div><div style=\"font-size:12px;color:#5b6472;margin-bottom:10px;\">Written to pipeline_runs this run - one row per layer, plus the reject reason breakdown beneath it.</div><pre style=\"background:#eef1f4;border:1px solid #dde2e8;border-radius:6px;padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.5;color:#0e7c7b;white-space:pre-wrap;word-break:break-word;margin:0;overflow-x:auto;\">{}</pre></div><div style=\"font-size:12px;color:#5b6472;text-align:center;padding-top:6px;\">Metadata was read before this run and read again after a real write to pipeline_runs, so the table above reflects genuinely new state, not two identical reads.</div></div></body></html>', $.write_context_result.Payload.run_summary_table)' had the following error: The JsonPath argument for the field '$.write_context_result.Payload.run_summary_table' could not be found in the input '{\"AllocatedCapacity\":1,\"Arguments\":{\"--max-snapshot-age-seconds\":\"120\"},\"Attempt\":0,\"CompletedOn\":1788369403160,\"ExecutionTime\":60,\"GlueVersion\":\"5.1\",\"Id\":\"jr_f8857bda67c45da72d3119d3f4da5e0aef5e2e8156d626d8bd1a9be0732a56e4\",\"JobMode\":\"SCRIPT\",\"JobName\":\"hdb-job-0-compact-metadata\",\"JobRunState\":\"SUCCEEDED\",\"LastModifiedOn\":1788369403160,\"LogGroupName\":\"/aws-glue/python-jobs\",\"MaxCapacity\":1.0,\"PredecessorRuns\":[],\"StartedOn\":1788369338557,\"Timeout\":30}'"
+      },
+      {
+        "run_id": "192714380",
+        "table_id": "1",
+        "layer": "compact_metadata",
+        "start_time": "2026-09-02 15:32:39.736000",
+        "end_time": "2026-09-02 15:32:39.736000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "Failed to start job run due to missing metadata. (Service: AWSGlue; Status Code: 400; Error Code: EntityNotFoundException; Request ID: 0f97b190-2c82-4daf-8a2f-a8e748e8a033; Proxy: null)"
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_3_cleaned_iceberg",
+        "start_time": "2026-09-02 17:07:14.469459",
+        "end_time": "2026-09-02 17:07:14.469459",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": null
+      },
+      {
+        "run_id": "154140142",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 16:50:44.052000",
+        "end_time": "2026-09-02 16:54:42.434000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()"
+      },
+      {
+        "run_id": "977054396",
+        "table_id": "1",
+        "layer": "hashed_iceberg",
+        "start_time": "2026-09-02 17:35:56.174596",
+        "end_time": "2026-09-02 17:36:47.844394",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "hashed_iceberg: 41 kept = 41, matches transformed_iceberg's recorded 41"
+      },
+      {
+        "run_id": "977054377",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 15:48:00.778644",
+        "end_time": "2026-09-02 15:48:50.647331",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": "raw_iceberg: 500 kept = 500, matches ingestion_to_source's recorded 500"
+      },
+      {
+        "run_id": "977054372",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 15:23:35.779286",
+        "end_time": "2026-09-02 15:24:21.653618",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": "raw_iceberg: 500 kept = 500, matches ingestion_to_source's recorded 500"
+      },
+      {
+        "run_id": "275177329",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 16:29:16.151000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "CommandFailedException: Script file doesn't exist s3://mission-hdb-eventdriven-544795558120-pipeline-scripts/python-scripts/05_ETL/job_2_raw_iceberg_DOES_NOT_EXIST.py"
+      },
+      {
+        "run_id": "977054371",
+        "table_id": "1",
+        "layer": "ingestion_to_source",
+        "start_time": "2026-09-02 15:21:27.873604",
+        "end_time": "2026-09-02 15:21:56.431668",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": "landed 500 row(s) across 1 file(s) - source_location=data.gov.sg (collection 189), target_location=s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/"
+      },
+      {
+        "run_id": "134223203",
+        "table_id": "1",
+        "layer": "job_2b_data_profiling",
+        "start_time": "2026-09-02 15:49:56.801073",
+        "end_time": "2026-09-02 15:49:56.801073",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": null
+      },
+      {
+        "run_id": "977054373",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 15:25:35.080205",
+        "end_time": "2026-09-02 15:25:52.386065",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": "profiled 500 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T152537Z.json"
+      },
+      {
+        "run_id": "977054389",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 17:06:38.178814",
+        "end_time": "2026-09-02 17:07:47.656027",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": "cleaned_iceberg: 42 kept + 8 rejected = 50, matches raw_iceberg's recorded 50"
+      },
+      {
+        "run_id": "3",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 15:02:33.198454",
+        "end_time": "2026-09-02 15:02:48.455741",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "profiled 50 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T150235Z.json"
+      },
+      {
+        "run_id": "72707160",
+        "table_id": "1",
+        "layer": "compact_metadata",
+        "start_time": "2026-09-02 15:58:08.185000",
+        "end_time": "2026-09-02 15:58:08.185000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "Command failed with exit code 2"
+      },
+      {
+        "run_id": "977054394",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 17:31:54.291615",
+        "end_time": "2026-09-02 17:33:04.831925",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": "cleaned_iceberg: 42 kept + 8 rejected = 50, matches raw_iceberg's recorded 50"
+      },
+      {
+        "run_id": "487545404",
+        "table_id": "1",
+        "layer": "SendSuccessEmail",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 17:24:45.393000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "An error occurred while executing the state 'SendSuccessEmail' (entered at the event id #76). The function 'States.Format('<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;background:#f5f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a2233;\"><div style=\"max-width:640px;margin:0 auto;padding:32px 20px;\"><div style=\"font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#5b6472;margin-bottom:8px;\">HDB Pipeline Run - SUCCESS</div><h1 style=\"font-size:22px;font-weight:700;margin:0 0 6px;color:#1a2233;\">Resale Flat Prices ETL - run completed</h1><p style=\"color:#5b6472;font-size:14px;margin:0 0 20px;\">All 6 steps ran cleanly: ingestion, raw, data profiling, cleaned, transformed, hashed.</p><div style=\"background:#ffffff;border:1px solid #dde2e8;border-radius:8px;padding:16px 18px;margin-bottom:16px;\"><div style=\"font-size:13px;font-weight:700;margin-bottom:4px;color:#1a2233;\">Run summary</div><div style=\"font-size:12px;color:#5b6472;margin-bottom:10px;\">Written to pipeline_runs this run - one row per layer, plus the reject reason breakdown beneath it.</div><pre style=\"background:#eef1f4;border:1px solid #dde2e8;border-radius:6px;padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.5;color:#0e7c7b;white-space:pre-wrap;word-break:break-word;margin:0;overflow-x:auto;\">{}</pre></div><div style=\"font-size:12px;color:#5b6472;text-align:center;padding-top:6px;\">Metadata was read before this run and read again after a real write to pipeline_runs, so the table above reflects genuinely new state, not two identical reads.</div></div></body></html>', $.write_context_result.Payload.run_summary_table)' had the following error: The JsonPath argument for the field '$.write_context_result.Payload.run_summary_table' could not be found in the input '{\"AllocatedCapacity\":1,\"Arguments\":{\"--max-snapshot-age-seconds\":\"120\"},\"Attempt\":0,\"CompletedOn\":1788369403160,\"ExecutionTime\":60,\"GlueVersion\":\"5.1\",\"Id\":\"jr_f8857bda67c45da72d3119d3f4da5e0aef5e2e8156d626d8bd1a9be0732a56e4\",\"JobMode\":\"SCRIPT\",\"JobName\":\"hdb-job-0-compact-metadata\",\"JobRunState\":\"SUCCEEDED\",\"LastModifiedOn\":1788369403160,\"LogGroupName\":\"/aws-glue/python-jobs\",\"MaxCapacity\":1.0,\"PredecessorRuns\":[],\"StartedOn\":1788369338557,\"Timeout\":30}'"
+      },
+      {
+        "run_id": "641695113",
+        "table_id": "1",
+        "layer": "SendSuccessEmail",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 17:26:29.973000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "An error occurred while executing the state 'SendSuccessEmail' (entered at the event id #76). The function 'States.Format('<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;background:#f5f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a2233;\"><div style=\"max-width:640px;margin:0 auto;padding:32px 20px;\"><div style=\"font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#5b6472;margin-bottom:8px;\">HDB Pipeline Run - SUCCESS</div><h1 style=\"font-size:22px;font-weight:700;margin:0 0 6px;color:#1a2233;\">Resale Flat Prices ETL - run completed</h1><p style=\"color:#5b6472;font-size:14px;margin:0 0 20px;\">All 6 steps ran cleanly: ingestion, raw, data profiling, cleaned, transformed, hashed.</p><div style=\"background:#ffffff;border:1px solid #dde2e8;border-radius:8px;padding:16px 18px;margin-bottom:16px;\"><div style=\"font-size:13px;font-weight:700;margin-bottom:4px;color:#1a2233;\">Run summary</div><div style=\"font-size:12px;color:#5b6472;margin-bottom:10px;\">Written to pipeline_runs this run - one row per layer, plus the reject reason breakdown beneath it.</div><pre style=\"background:#eef1f4;border:1px solid #dde2e8;border-radius:6px;padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.5;color:#0e7c7b;white-space:pre-wrap;word-break:break-word;margin:0;overflow-x:auto;\">{}</pre></div><div style=\"font-size:12px;color:#5b6472;text-align:center;padding-top:6px;\">Metadata was read before this run and read again after a real write to pipeline_runs, so the table above reflects genuinely new state, not two identical reads.</div></div></body></html>', $.write_context_result.Payload.run_summary_table)' had the following error: The JsonPath argument for the field '$.write_context_result.Payload.run_summary_table' could not be found in the input '{\"AllocatedCapacity\":1,\"Arguments\":{\"--max-snapshot-age-seconds\":\"120\"},\"Attempt\":0,\"CompletedOn\":1788369403160,\"ExecutionTime\":60,\"GlueVersion\":\"5.1\",\"Id\":\"jr_f8857bda67c45da72d3119d3f4da5e0aef5e2e8156d626d8bd1a9be0732a56e4\",\"JobMode\":\"SCRIPT\",\"JobName\":\"hdb-job-0-compact-metadata\",\"JobRunState\":\"SUCCEEDED\",\"LastModifiedOn\":1788369403160,\"LogGroupName\":\"/aws-glue/python-jobs\",\"MaxCapacity\":1.0,\"PredecessorRuns\":[],\"StartedOn\":1788369338557,\"Timeout\":30}'"
+      },
+      {
+        "run_id": "994370844",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 17:29:10.187649",
+        "end_time": "2026-09-02 17:29:10.187649",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "994370850",
+        "table_id": "1",
+        "layer": "pipeline",
+        "start_time": "2026-09-03 00:19:47.177001",
+        "end_time": "2026-09-03 00:20:34.521164",
+        "status": "FAILED",
+        "number_of_records": "0",
+        "error_message": "Failed at step 'ingestion_to_source': ClientError: An error occurred (AccessDeniedException) when calling the Invoke operation: User: arn:aws:sts::544795558120:assumed-role/hdb-eventdriven-dev-glue-role/GlueJobRunnerSession is not authorized to perform: lambda:InvokeFunction on resource: arn:aws:lambda:us-east-1:544795558120:function:mission-hdb-eventdriven-metadata-reader because no identity-based policy allows the lambda:InvokeFunction action"
+      },
+      {
+        "run_id": "977054390",
+        "table_id": "1",
+        "layer": "transformed_iceberg",
+        "start_time": "2026-09-02 17:08:42.735791",
+        "end_time": "2026-09-02 17:09:37.087096",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "transformed_iceberg: 41 kept + 1 rejected = 42, matches cleaned_iceberg's recorded 42"
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 17:03:39.632314",
+        "end_time": "2026-09-02 17:03:39.632314",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "847108552",
+        "table_id": "1",
+        "layer": "SendSuccessEmail",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 17:24:01.391000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "An error occurred while executing the state 'SendSuccessEmail' (entered at the event id #76). The function 'States.Format('<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;background:#f5f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a2233;\"><div style=\"max-width:640px;margin:0 auto;padding:32px 20px;\"><div style=\"font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#5b6472;margin-bottom:8px;\">HDB Pipeline Run - SUCCESS</div><h1 style=\"font-size:22px;font-weight:700;margin:0 0 6px;color:#1a2233;\">Resale Flat Prices ETL - run completed</h1><p style=\"color:#5b6472;font-size:14px;margin:0 0 20px;\">All 6 steps ran cleanly: ingestion, raw, data profiling, cleaned, transformed, hashed.</p><div style=\"background:#ffffff;border:1px solid #dde2e8;border-radius:8px;padding:16px 18px;margin-bottom:16px;\"><div style=\"font-size:13px;font-weight:700;margin-bottom:4px;color:#1a2233;\">Run summary</div><div style=\"font-size:12px;color:#5b6472;margin-bottom:10px;\">Written to pipeline_runs this run - one row per layer, plus the reject reason breakdown beneath it.</div><pre style=\"background:#eef1f4;border:1px solid #dde2e8;border-radius:6px;padding:12px 14px;font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.5;color:#0e7c7b;white-space:pre-wrap;word-break:break-word;margin:0;overflow-x:auto;\">{}</pre></div><div style=\"font-size:12px;color:#5b6472;text-align:center;padding-top:6px;\">Metadata was read before this run and read again after a real write to pipeline_runs, so the table above reflects genuinely new state, not two identical reads.</div></div></body></html>', $.write_context_result.Payload.run_summary_table)' had the following error: The JsonPath argument for the field '$.write_context_result.Payload.run_summary_table' could not be found in the input '{\"AllocatedCapacity\":1,\"Arguments\":{\"--max-snapshot-age-seconds\":\"120\"},\"Attempt\":0,\"CompletedOn\":1788369403160,\"ExecutionTime\":60,\"GlueVersion\":\"5.1\",\"Id\":\"jr_f8857bda67c45da72d3119d3f4da5e0aef5e2e8156d626d8bd1a9be0732a56e4\",\"JobMode\":\"SCRIPT\",\"JobName\":\"hdb-job-0-compact-metadata\",\"JobRunState\":\"SUCCEEDED\",\"LastModifiedOn\":1788369403160,\"LogGroupName\":\"/aws-glue/python-jobs\",\"MaxCapacity\":1.0,\"PredecessorRuns\":[],\"StartedOn\":1788369338557,\"Timeout\":30}'"
+      },
+      {
+        "run_id": "994370844",
+        "table_id": "1",
+        "layer": "job_3_cleaned_iceberg",
+        "start_time": "2026-09-02 17:32:30.454645",
+        "end_time": "2026-09-02 17:32:30.454645",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": null
+      },
+      {
+        "run_id": "277448750",
+        "table_id": "1",
+        "layer": "job_2b_data_profiling",
+        "start_time": "2026-09-02 15:25:37.702682",
+        "end_time": "2026-09-02 15:25:37.702682",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": null
+      },
+      {
+        "run_id": "977054381",
+        "table_id": "1",
+        "layer": "hashed_iceberg",
+        "start_time": "2026-09-02 15:54:57.388972",
+        "end_time": "2026-09-02 15:55:46.243816",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": "hashed_iceberg: 426 kept = 426, matches transformed_iceberg's recorded 426"
+      },
+      {
+        "run_id": "977054385",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 16:52:55.137365",
+        "end_time": "2026-09-02 16:53:10.222215",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "profiled 50 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T165257Z.json"
+      },
+      {
+        "run_id": "977054392",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 17:28:56.136677",
+        "end_time": "2026-09-02 17:29:46.430545",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "raw_iceberg: 50 kept = 50, matches ingestion_to_source's recorded 50"
+      },
+      {
+        "run_id": "823258806",
+        "table_id": "1",
+        "layer": "compact_metadata",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 17:13:56.135000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "Command failed with exit code 2"
+      },
+      {
+        "run_id": "363492250",
+        "table_id": "1",
+        "layer": "job_4_transformed_iceberg",
+        "start_time": "2026-09-02 18:33:48.894309",
+        "end_time": "2026-09-02 18:33:48.894309",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": null
+      },
+      {
+        "run_id": "977054382",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 16:45:55.605774",
+        "end_time": "2026-09-02 16:46:46.490652",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": "raw_iceberg: 500 kept = 500, matches ingestion_to_source's recorded 500"
+      },
+      {
+        "run_id": "977054375",
+        "table_id": "1",
+        "layer": "transformed_iceberg",
+        "start_time": "2026-09-02 15:28:29.890059",
+        "end_time": "2026-09-02 15:29:21.982641",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": "transformed_iceberg: 426 kept + 48 rejected = 474, matches cleaned_iceberg's recorded 474"
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_5_hashed_iceberg",
+        "start_time": "2026-09-02 17:10:50.618194",
+        "end_time": "2026-09-02 17:10:50.618194",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": null
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_2_raw_iceberg",
+        "start_time": "2026-09-02 16:46:10.375145",
+        "end_time": "2026-09-02 16:46:10.375145",
+        "status": "SUCCEEDED",
+        "number_of_records": "500",
+        "error_message": null
+      },
+      {
+        "run_id": "277448750",
+        "table_id": "1",
+        "layer": "job_4_transformed_iceberg",
+        "start_time": "2026-09-02 15:28:54.370592",
+        "end_time": "2026-09-02 15:28:54.370592",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": null
+      },
+      {
+        "run_id": "994370848",
+        "table_id": "1",
+        "layer": "transformed_iceberg",
+        "start_time": "2026-09-02 18:33:28.065334",
+        "end_time": "2026-09-02 18:34:24.579937",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "transformed_iceberg: 41 kept + 1 rejected = 42, matches cleaned_iceberg's recorded 42"
+      },
+      {
+        "run_id": "994370844",
+        "table_id": "1",
+        "layer": "job_4_transformed_iceberg",
+        "start_time": "2026-09-02 17:34:20.410202",
+        "end_time": "2026-09-02 17:34:20.410202",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": null
+      },
+      {
+        "run_id": "977054387",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 17:03:27.477001",
+        "end_time": "2026-09-02 17:04:12.868399",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "raw_iceberg: 50 kept = 50, matches ingestion_to_source's recorded 50"
+      },
+      {
+        "run_id": "994370847",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 18:31:35.500327",
+        "end_time": "2026-09-02 18:32:40.553107",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": "cleaned_iceberg: 42 kept + 8 rejected = 50, matches raw_iceberg's recorded 50"
+      },
+      {
+        "run_id": "277448750",
+        "table_id": "1",
+        "layer": "job_3_cleaned_iceberg",
+        "start_time": "2026-09-02 15:27:06.606434",
+        "end_time": "2026-09-02 15:27:06.606434",
+        "status": "SUCCEEDED",
+        "number_of_records": "474",
+        "error_message": null
+      },
+      {
+        "run_id": "977054388",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 17:05:32.985844",
+        "end_time": "2026-09-02 17:05:54.266734",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "profiled 50 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T170535Z.json"
+      },
+      {
+        "run_id": "994370844",
+        "table_id": "1",
+        "layer": "job_5_hashed_iceberg",
+        "start_time": "2026-09-02 17:36:14.454283",
+        "end_time": "2026-09-02 17:36:14.454283",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": null
+      },
+      {
+        "run_id": "977054380",
+        "table_id": "1",
+        "layer": "transformed_iceberg",
+        "start_time": "2026-09-02 15:52:46.940085",
+        "end_time": "2026-09-02 15:53:46.662042",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": "transformed_iceberg: 426 kept + 48 rejected = 474, matches cleaned_iceberg's recorded 474"
+      },
+      {
+        "run_id": "363492250",
+        "table_id": "1",
+        "layer": "job_2b_data_profiling",
+        "start_time": "2026-09-02 18:30:35.691742",
+        "end_time": "2026-09-02 18:30:35.691742",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "994370844",
+        "table_id": "1",
+        "layer": "job_2b_data_profiling",
+        "start_time": "2026-09-02 17:30:52.544563",
+        "end_time": "2026-09-02 17:30:52.544563",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "787144848",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 16:27:20.889000",
+        "end_time": "2026-09-02 16:38:35.391000",
+        "status": "FAILED",
+        "number_of_records": null,
+        "error_message": "CommandFailedException: Script file doesn't exist s3://mission-hdb-eventdriven-544795558120-pipeline-scripts/python-scripts/05_ETL/job_2_raw_iceberg_DOES_NOT_EXIST.py"
+      },
+      {
+        "run_id": "977054383",
+        "table_id": "1",
+        "layer": "ingestion_to_source",
+        "start_time": "2026-09-02 16:49:00.082427",
+        "end_time": "2026-09-02 16:49:22.929588",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "landed 50 row(s) across 1 file(s) - source_location=data.gov.sg (collection 189), target_location=s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/"
+      },
+      {
+        "run_id": "277448750",
+        "table_id": "1",
+        "layer": "job_5_hashed_iceberg",
+        "start_time": "2026-09-02 15:30:37.903437",
+        "end_time": "2026-09-02 15:30:37.903437",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": null
+      },
+      {
+        "run_id": "977054379",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 15:50:53.550276",
+        "end_time": "2026-09-02 15:52:04.707306",
+        "status": "SUCCEEDED",
+        "number_of_records": "474",
+        "error_message": "cleaned_iceberg: 474 kept + 26 rejected = 500, matches raw_iceberg's recorded 500"
+      },
+      {
+        "run_id": "977054386",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 16:53:56.494810",
+        "end_time": "2026-09-02 16:54:08.369767",
+        "status": "FAILED",
+        "number_of_records": "0",
+        "error_message": "The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()"
+      },
+      {
+        "run_id": "994370846",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 18:30:33.145810",
+        "end_time": "2026-09-02 18:30:51.515806",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "profiled 50 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T183035Z.json"
+      },
+      {
+        "run_id": "363492250",
+        "table_id": "1",
+        "layer": "job_5_hashed_iceberg",
+        "start_time": "2026-09-02 18:35:54.282692",
+        "end_time": "2026-09-02 18:35:54.282692",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": null
+      },
+      {
+        "run_id": "977054374",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-02 15:26:30.537831",
+        "end_time": "2026-09-02 15:27:39.406426",
+        "status": "SUCCEEDED",
+        "number_of_records": "474",
+        "error_message": "cleaned_iceberg: 474 kept + 26 rejected = 500, matches raw_iceberg's recorded 500"
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_2b_data_profiling",
+        "start_time": "2026-09-02 16:52:57.644915",
+        "end_time": "2026-09-02 16:52:57.644915",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": null
+      },
+      {
+        "run_id": "2",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 15:00:33.728226",
+        "end_time": "2026-09-02 15:01:14.758878",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "raw_iceberg: 50 kept = 50, matches ingestion_to_source's recorded 50"
+      },
+      {
+        "run_id": "977054393",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-02 17:30:50.025705",
+        "end_time": "2026-09-02 17:31:05.230849",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "profiled 50 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260902T173052Z.json"
+      },
+      {
+        "run_id": "134223203",
+        "table_id": "1",
+        "layer": "job_5_hashed_iceberg",
+        "start_time": "2026-09-02 15:55:13.343546",
+        "end_time": "2026-09-02 15:55:13.343546",
+        "status": "SUCCEEDED",
+        "number_of_records": "426",
+        "error_message": null
+      },
+      {
+        "run_id": "977054384",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 16:50:58.730004",
+        "end_time": "2026-09-02 16:51:43.098475",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "raw_iceberg: 50 kept = 50, matches ingestion_to_source's recorded 50"
+      },
+      {
+        "run_id": "994370845",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-02 18:28:35.270585",
+        "end_time": "2026-09-02 18:29:19.073412",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "raw_iceberg: 50 kept = 50, matches ingestion_to_source's recorded 50"
+      },
+      {
+        "run_id": "382411859",
+        "table_id": "1",
+        "layer": "job_4_transformed_iceberg",
+        "start_time": "2026-09-02 17:09:03.425905",
+        "end_time": "2026-09-02 17:09:03.425905",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": null
+      },
+      {
+        "run_id": "363492250",
+        "table_id": "1",
+        "layer": "job_3_cleaned_iceberg",
+        "start_time": "2026-09-02 18:32:09.803927",
+        "end_time": "2026-09-02 18:32:09.803927",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": null
+      }
+    ]
+  },
+  "errors": {},
+  "update_errors": [],
+  "run_summary_table": "",
+  "run_summary_markdown": "",
+  "clean_error_message": null
+}

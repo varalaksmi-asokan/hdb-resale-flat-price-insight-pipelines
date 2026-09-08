@@ -1,0 +1,153 @@
+{
+  "action": "read",
+  "database": "hdb_eventdriven_database",
+  "generated_at": "2026-09-03T06:29:18.613773+00:00",
+  "tables": {
+    "metadata_tables": [
+      {
+        "table_id": "1",
+        "table_name": "resaleflat_price",
+        "source_system": "HDB",
+        "source_schema": null,
+        "source_table": "resaleflat_price",
+        "source_path": "s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/",
+        "target_layer": "gold",
+        "bronze_schema": "raw_iceberg",
+        "silver_schema": "cleaned_iceberg,transformed_iceberg",
+        "gold_schema": "hashed_iceberg",
+        "active_flag": "true",
+        "load_order": "1",
+        "created_at": "2026-09-03 06:16:26.984000"
+      }
+    ],
+    "table_parameters": [
+      {
+        "table_id": "1",
+        "parameter_name": "load_type",
+        "parameter_value": "FULL",
+        "created_at": "2026-09-03 06:16:11.204000"
+      },
+      {
+        "table_id": "1",
+        "parameter_name": "primary_key",
+        "parameter_value": "month,town,flat_type,block,street_name,storey_range,floor_area_sqm,flat_model,lease_commence_date",
+        "created_at": "2026-09-03 06:16:11.204000"
+      },
+      {
+        "table_id": "1",
+        "parameter_name": "lookback_window",
+        "parameter_value": "7",
+        "created_at": "2026-09-03 06:16:11.204000"
+      }
+    ],
+    "table_watermarks": [
+      {
+        "table_id": "3",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-03 06:16:18.965000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "6",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-03 06:16:18.965000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "5",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-03 06:16:18.965000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "1",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-03 06:16:18.965000",
+        "last_run_id": null
+      },
+      {
+        "table_id": "2",
+        "last_watermark_value": "1900-01-01 00:00:00",
+        "last_updated_at": "2026-09-03 06:16:18.965000",
+        "last_run_id": null
+      }
+    ],
+    "pipeline_runs": [
+      {
+        "run_id": "2",
+        "table_id": "1",
+        "layer": "raw_iceberg",
+        "start_time": "2026-09-03 06:22:57.974692",
+        "end_time": "2026-09-03 06:23:53.912157",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "raw_iceberg: 50 kept = 50, matches ingestion_to_source's recorded 50"
+      },
+      {
+        "run_id": "7",
+        "table_id": "1",
+        "layer": "pipeline",
+        "start_time": "2026-09-03 06:22:19.222152",
+        "end_time": "2026-09-03 06:28:50.966042",
+        "status": "SUCCEEDED",
+        "number_of_records": "1",
+        "error_message": null
+      },
+      {
+        "run_id": "3",
+        "table_id": "1",
+        "layer": "profiling",
+        "start_time": "2026-09-03 06:24:02.192243",
+        "end_time": "2026-09-03 06:24:24.302227",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "profiled 50 row(s) from raw_iceberg, report written to s3://mission-hdb-eventdriven-544795558120-audit-tables/profiling_reports/raw_iceberg_20260903T062406Z.json"
+      },
+      {
+        "run_id": "4",
+        "table_id": "1",
+        "layer": "cleaned_iceberg",
+        "start_time": "2026-09-03 06:24:32.584507",
+        "end_time": "2026-09-03 06:26:13.008696",
+        "status": "SUCCEEDED",
+        "number_of_records": "42",
+        "error_message": "cleaned_iceberg: 42 kept + 8 rejected = 50, matches raw_iceberg's recorded 50"
+      },
+      {
+        "run_id": "5",
+        "table_id": "1",
+        "layer": "transformed_iceberg",
+        "start_time": "2026-09-03 06:26:21.332490",
+        "end_time": "2026-09-03 06:27:37.581411",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "transformed_iceberg: 41 kept + 1 rejected = 42, matches cleaned_iceberg's recorded 42"
+      },
+      {
+        "run_id": "6",
+        "table_id": "1",
+        "layer": "hashed_iceberg",
+        "start_time": "2026-09-03 06:27:47.018890",
+        "end_time": "2026-09-03 06:28:43.748127",
+        "status": "SUCCEEDED",
+        "number_of_records": "41",
+        "error_message": "hashed_iceberg: 41 kept = 41, matches transformed_iceberg's recorded 41"
+      },
+      {
+        "run_id": "1",
+        "table_id": "1",
+        "layer": "ingestion_to_source",
+        "start_time": "2026-09-03 06:22:19.667176",
+        "end_time": "2026-09-03 06:22:47.597718",
+        "status": "SUCCEEDED",
+        "number_of_records": "50",
+        "error_message": "landed 50 row(s) across 1 file(s) - source_location=data.gov.sg (collection 189), target_location=s3://mission-hdb-eventdriven-544795558120-source/resale-flat-prices-API-ingestion/"
+      }
+    ]
+  },
+  "errors": {},
+  "update_errors": [],
+  "run_summary_table": "",
+  "run_summary_markdown": "",
+  "clean_error_message": null
+}

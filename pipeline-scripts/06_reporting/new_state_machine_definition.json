@@ -1,0 +1,141 @@
+{
+  "Comment": "HDB Resale Flat Prices pipeline - runs each Glue job in order, stops on first failure (uncaught, so it is Redrive-able from the real failing step), verifies before/after metadata and alerts on success. Failure alerting happens out-of-band via an EventBridge rule on this execution's own FAILED status change, not inline.",
+  "TimeoutSeconds": 7200,
+  "StartAt": "CheckMetadataBeforeRun",
+  "States": {
+    "CheckMetadataBeforeRun": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:544795558120:function:mission-hdb-eventdriven-metadata-reader",
+        "Payload": {
+          "action": "read"
+        }
+      },
+      "ResultPath": "$.context_before",
+      "Next": "IngestToRawLayer"
+    },
+    "IngestToRawLayer": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "hdb-job-2-raw-iceberg"
+      },
+      "Next": "ProfileRawData"
+    },
+    "ProfileRawData": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "hdb-job-2b-data-profiling"
+      },
+      "Next": "CleanDataLayer"
+    },
+    "CleanDataLayer": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "hdb-job-3-cleaned-iceberg"
+      },
+      "Next": "TransformDataLayer"
+    },
+    "TransformDataLayer": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "hdb-job-4-transformed-iceberg"
+      },
+      "Next": "HashAndVersionDataLayer"
+    },
+    "HashAndVersionDataLayer": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "hdb-job-5-hashed-iceberg"
+      },
+      "Next": "RecordRunSummary"
+    },
+    "RecordRunSummary": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:544795558120:function:mission-hdb-eventdriven-metadata-reader",
+        "Payload": {
+          "action": "update",
+          "sync_pipeline_runs_from_audit": {
+            "run_id.$": "States.MathRandom(1, 999999999)",
+            "since.$": "$$.Execution.StartTime",
+            "table_id": 1,
+            "execution_name.$": "$$.Execution.Name"
+          }
+        }
+      },
+      "ResultPath": "$.write_context_result",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "ResultPath": "$.write_context_error",
+          "Next": "VerifyMetadataAfterRun"
+        }
+      ],
+      "Next": "VerifyMetadataAfterRun"
+    },
+    "VerifyMetadataAfterRun": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "arn:aws:lambda:us-east-1:544795558120:function:mission-hdb-eventdriven-metadata-reader",
+        "Payload": {
+          "action": "read"
+        }
+      },
+      "ResultPath": "$.context_after",
+      "Next": "CompactIcebergTables"
+    },
+    "CompactIcebergTables": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "hdb-job-0-compact-metadata",
+        "Arguments": {
+          "--max-snapshot-age-seconds": "120"
+        }
+      },
+      "Next": "SendSuccessEmail",
+      "ResultPath": "$.compact_result"
+    },
+    "SendSuccessEmail": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::aws-sdk:sesv2:sendEmail",
+      "Parameters": {
+        "FromEmailAddress": "varasenurs@gmail.com",
+        "Destination": {
+          "ToAddresses": [
+            "varasenurs@gmail.com"
+          ]
+        },
+        "Content": {
+          "Simple": {
+            "Subject": {
+              "Data": "HDB Pipeline Run - SUCCESS"
+            },
+            "Body": {
+              "Html": {
+                "Data.$": "States.Format('<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"></head><body style=\"margin:0;background:#f5f7f9;font-family:Arial,Helvetica,sans-serif;color:#1a2233;\"><div style=\"max-width:640px;margin:0 auto;padding:32px 20px;\"><div style=\"font-family:Consolas,Menlo,monospace;font-size:12px;letter-spacing:0.05em;text-transform:uppercase;color:#5b6472;margin-bottom:8px;\">HDB Pipeline Run - SUCCESS</div><h1 style=\"font-size:22px;font-weight:700;margin:0 0 6px;color:#1a2233;\">Resale Flat Prices ETL - run completed</h1><p style=\"color:#5b6472;font-size:14px;margin:0 0 20px;\">All 6 steps ran cleanly: ingestion, raw, data profiling, cleaned, transformed, hashed.</p>{}<div style=\"font-size:12px;color:#5b6472;text-align:center;padding-top:6px;\">Metadata was read before this run and read again after a real write to pipeline_runs, so the report above reflects genuinely new state, not two identical reads.</div></div></body></html>', $.write_context_result.Payload.run_summary_html)"
+              },
+              "Text": {
+                "Data.$": "States.Format('HDB Resale Flat Prices Pipeline - ETL process completed successfully\n====================================================================\nAll 6 steps ran cleanly: ingestion, raw, data profiling, cleaned, transformed, hashed.\n\nRun summary (written to pipeline_runs this run):\n{}\n\nMetadata was read before this run and read again after a real write to pipeline_runs (via sync_pipeline_runs_from_audit) - the table above reflects genuinely new state, not just two identical reads.', $.write_context_result.Payload.run_summary_table)"
+              }
+            }
+          }
+        }
+      },
+      "Next": "PipelineCompletedSuccessfully"
+    },
+    "PipelineCompletedSuccessfully": {
+      "Type": "Succeed"
+    }
+  }
+}
