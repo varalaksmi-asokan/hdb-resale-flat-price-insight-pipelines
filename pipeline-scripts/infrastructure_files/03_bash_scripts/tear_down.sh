@@ -4,7 +4,7 @@ set -Eeuo pipefail
 
 PROJECT_NAME="${PROJECT_NAME:-hdb-eventdriven}"
 
-REGION="us-east-1"
+REGION="${AWS_REGION:-us-east-1}"
 AWS_PROFILE="${AWS_PROFILE:-sujen}"
 
 ACCOUNT_ID="$(

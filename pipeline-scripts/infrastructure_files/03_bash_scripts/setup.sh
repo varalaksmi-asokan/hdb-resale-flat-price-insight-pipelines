@@ -1,13 +1,13 @@
 
 export AWS_PROFILE="${AWS_PROFILE:-sujen}"
-export AWS_REGION="us-east-1"
+export AWS_REGION="${AWS_REGION:-us-east-1}"
 export AWS_DEFAULT_REGION="${AWS_REGION}"
 
 set -Eeuo pipefail
 
 PROJECT_NAME="${PROJECT_NAME:-hdb-eventdriven}"
 
-REGION="us-east-1"
+REGION="${AWS_REGION}"
 AWS_PROFILE="${AWS_PROFILE:-sujen}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
