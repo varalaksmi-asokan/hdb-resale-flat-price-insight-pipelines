@@ -29,9 +29,6 @@ env:
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: "544795558120"
   PROJECT_NAME: hdb-eventdriven
-  # All names below follow the exact deterministic convention setup.sh
-  # uses (mission-<project>-<account_id>-<suffix>, etc.) - adjust here if
-  # PROJECT_NAME/AWS_REGION were overridden when setup.sh was last run.
   PIPELINE_BUCKET: mission-hdb-eventdriven-544795558120-pipeline-scripts
   PIPELINE_PREFIX: python-scripts
   AUDIT_BUCKET: mission-hdb-eventdriven-544795558120-audit-tables
@@ -45,10 +42,6 @@ env:
   GLUE_JOB_3: hdb-job-3-cleaned-iceberg
   GLUE_JOB_4: hdb-job-4-transformed-iceberg
   GLUE_JOB_5: hdb-job-5-hashed-iceberg
-  # Plain SNS text alerts by default (matches current setup.sh config).
-  # To switch to formatted SES emails, set these as repo Variables
-  # (Settings -> Secrets and variables -> Actions -> Variables) and
-  # reference them below as ${{ vars.ALERT_RECIPIENT_EMAILS }} / SES_SENDER_EMAIL.
   SES_RECIPIENT_EMAILS: ""
   SES_SENDER_EMAIL: ""
 
@@ -58,6 +51,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Debug OIDC token claims
+        run: |
+          RESPONSE="$(curl -sS -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
+          export RESPONSE
+          python3 -c "
+          import base64, json, os
+          resp = json.loads(os.environ['RESPONSE'])
+          token = resp['value']
+          payload_b64 = token.split('.')[1]
+          payload_b64 += '=' * (-len(payload_b64) % 4)
+          claims = json.loads(base64.urlsafe_b64decode(payload_b64))
+          for key in ('sub', 'aud', 'iss', 'repository', 'repository_owner', 'ref'):
+              print(f'{key}: {claims.get(key)}')
+          "
 
       - name: Configure AWS credentials (OIDC, no long-lived keys)
         uses: aws-actions/configure-aws-credentials@v4
