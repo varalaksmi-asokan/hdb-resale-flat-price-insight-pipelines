@@ -26,9 +26,16 @@ def main() -> None:
 
         hashable = hashable.drop(columns=["resale_identifier"], errors="ignore")
 
-        merge_iceberg(hashable, stage="hashed_staging")
+        # NOTE: this used to also run a full merge_iceberg() upsert into
+        # hashed_iceberg_staging before the DQD check below, then run the SAME
+        # merge AGAIN into hashed_iceberg after. Nothing ever reads
+        # hashed_iceberg_staging (verified repo-wide) - it was paying for a full
+        # MERGE INTO (with its own _merge_scratch write + row-count checks) twice
+        # per run against identical rows. Removed 2026-09-12 as part of
+        # investigating run duration climbing every run.
         logger.info(
-            "staged %d row(s) into hashed_iceberg_staging, %d rejected (missing identifier)",
+            "%d row(s) ready to upsert into hashed_iceberg, %d rejected (missing identifier) - "
+            "merging after the DQD reconciliation check below",
             len(hashable), len(unhashable),
         )
         record_audit(

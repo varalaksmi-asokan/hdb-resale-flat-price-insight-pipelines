@@ -1,0 +1,104 @@
+name: Deploy pipeline scripts
+
+# Syncs pipeline-scripts/ to S3 (which is what the Glue jobs actually read
+# their code from - they point at a fixed S3 path, so overwriting the
+# object there is enough to update job behavior, no `glue update-job`
+# call needed) and refreshes the Step Functions state machine definition.
+#
+# This is intentionally NOT a full infrastructure deploy. It uses the
+# hdb-pipeline-github-actions IAM role, which setup.sh scopes narrowly:
+# S3 access to the pipeline-scripts bucket only, glue:StartJobRun/GetJobRun/
+# GetJob, sns:Publish, and states:DescribeStateMachine/UpdateStateMachine.
+# It cannot create/update S3 buckets, Glue job definitions, Lambda, IAM
+# roles, or EventBridge rules - that still requires running
+# infrastructure_files/03_bash_scripts/setup.sh by hand with full
+# credentials.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pipeline-scripts/**"
+  workflow_dispatch: {}
+
+permissions:
+  id-token: write   # required for OIDC -> AssumeRoleWithWebIdentity
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCOUNT_ID: "544795558120"
+  PROJECT_NAME: hdb-eventdriven
+  # All names below follow the exact deterministic convention setup.sh
+  # uses (mission-<project>-<account_id>-<suffix>, etc.) - adjust here if
+  # PROJECT_NAME/AWS_REGION were overridden when setup.sh was last run.
+  PIPELINE_BUCKET: mission-hdb-eventdriven-544795558120-pipeline-scripts
+  PIPELINE_PREFIX: python-scripts
+  AUDIT_BUCKET: mission-hdb-eventdriven-544795558120-audit-tables
+  STATE_MACHINE_NAME: hdb-eventdriven-pipeline
+  STEPFUNCTIONS_ROLE_NAME: hdb-eventdriven-stepfunctions-role
+  LAMBDA_FUNCTION_NAME: mission-hdb-eventdriven-metadata-reader
+  SNS_TOPIC_NAME: hdb-eventdriven-notifications
+  GLUE_JOB_COMPACT: hdb-job-0-compact-metadata
+  GLUE_JOB_2: hdb-job-2-raw-iceberg
+  GLUE_JOB_2B: hdb-job-2b-data-profiling
+  GLUE_JOB_3: hdb-job-3-cleaned-iceberg
+  GLUE_JOB_4: hdb-job-4-transformed-iceberg
+  GLUE_JOB_5: hdb-job-5-hashed-iceberg
+  # Plain SNS text alerts by default (matches current setup.sh config).
+  # To switch to formatted SES emails, set these as repo Variables
+  # (Settings -> Secrets and variables -> Actions -> Variables) and
+  # reference them below as ${{ vars.ALERT_RECIPIENT_EMAILS }} / SES_SENDER_EMAIL.
+  SES_RECIPIENT_EMAILS: ""
+  SES_SENDER_EMAIL: ""
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC, no long-lived keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/hdb-pipeline-github-actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync pipeline-scripts to S3
+        run: |
+          aws s3 sync \
+            pipeline-scripts/ \
+            "s3://${PIPELINE_BUCKET}/${PIPELINE_PREFIX}/" \
+            --delete \
+            --exclude "*__pycache__*" \
+            --exclude "*.pyc" \
+            --exclude "*.ipynb_checkpoints*"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Rebuild state machine definition
+        run: |
+          SNS_TOPIC_ARN="arn:aws:sns:${AWS_REGION}:${AWS_ACCOUNT_ID}:${SNS_TOPIC_NAME}"
+          LAMBDA_ARN="arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:function:${LAMBDA_FUNCTION_NAME}"
+          STEPFUNCTIONS_ROLE_ARN="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${STEPFUNCTIONS_ROLE_NAME}"
+          DEFINITION_FILE="$(mktemp)"
+
+          python pipeline-scripts/05_ETL/build_state_machine_definition.py \
+            "${SNS_TOPIC_ARN}" \
+            "${LAMBDA_ARN}" \
+            "${GLUE_JOB_COMPACT}" \
+            "${GLUE_JOB_2}" "${GLUE_JOB_2B}" "${GLUE_JOB_3}" "${GLUE_JOB_4}" "${GLUE_JOB_5}" \
+            "${SES_SENDER_EMAIL}" "${SES_RECIPIENT_EMAILS}" \
+            "${AUDIT_BUCKET}" \
+            "${DEFINITION_FILE}"
+
+          aws stepfunctions update-state-machine \
+            --state-machine-arn "arn:aws:states:${AWS_REGION}:${AWS_ACCOUNT_ID}:stateMachine:${STATE_MACHINE_NAME}" \
+            --definition "file://${DEFINITION_FILE}" \
+            --role-arn "${STEPFUNCTIONS_ROLE_ARN}"
+
+          rm -f "${DEFINITION_FILE}"

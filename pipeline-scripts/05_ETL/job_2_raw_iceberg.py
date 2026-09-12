@@ -61,9 +61,14 @@ def main() -> None:
             )
             raw_df = raw_df.head(MAX_ROWS_TO_INGEST).copy()
 
-        write_by_load_type(raw_df, stage="raw_staging", table_id=1)
+        # NOTE: this used to also write raw_df to raw_iceberg_staging before the
+        # DQD check below, then write it AGAIN to raw_iceberg after. Nothing ever
+        # reads raw_iceberg_staging (verified repo-wide) - it was paying the full
+        # Athena INSERT-batch write cost twice per run for identical rows. Removed
+        # 2026-09-12 as part of investigating run duration climbing every run.
         logger.info(
-            "staged %d row(s) to raw_iceberg_staging (%d fully-blank row(s) dropped)",
+            "%d row(s) ready for raw_iceberg (%d fully-blank row(s) dropped) - "
+            "writing after the DQD reconciliation check below",
             len(raw_df), dropped_blank,
         )
         record_audit(

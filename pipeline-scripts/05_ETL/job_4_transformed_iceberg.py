@@ -87,9 +87,15 @@ def main() -> None:
 
         total_rejected = len(invalid) + len(discarded_dupes)
 
-        write_by_load_type(kept, stage="transformed_staging", table_id=1)
+        # NOTE: this used to also write kept to transformed_iceberg_staging before
+        # the DQD check below, then write it AGAIN to transformed_iceberg after.
+        # Nothing ever reads transformed_iceberg_staging (verified repo-wide) - it
+        # was paying the full Athena INSERT-batch write cost twice per run for
+        # identical rows. Removed 2026-09-12 as part of investigating run duration
+        # climbing every run.
         logger.info(
-            "staged %d row(s) to transformed_iceberg_staging (%d identifier-rejects, %d dupes)",
+            "%d row(s) ready for transformed_iceberg (%d identifier-rejects, %d dupes) - "
+            "writing after the DQD reconciliation check below",
             len(kept), len(invalid), len(discarded_dupes),
         )
         record_audit(
