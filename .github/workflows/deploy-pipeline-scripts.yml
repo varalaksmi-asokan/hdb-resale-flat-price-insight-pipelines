@@ -14,14 +14,17 @@ name: Deploy pipeline scripts
 # infrastructure_files/03_bash_scripts/setup.sh by hand with full
 # credentials.
 #
-# IMPORTANT: the last step below (Start Glue job run) means every push that
-# touches pipeline-scripts/**, and every manual workflow_dispatch run, starts
-# a real run of GLUE_JOB_COMPACT (hdb-job-0-compact-metadata) immediately
-# after deploying. This is deliberately NOT the full state-machine-driven
-# pipeline - it's this one job only, run directly via glue:StartJobRun, and
-# it does not chain on to raw/cleaned/transformed/hashed on its own (that
-# chaining only happens inside the Step Functions state machine). Use
-# `aws stepfunctions start-execution` yourself if you want the full pipeline.
+# DISABLED 2026-09-13: this workflow used to also auto-start
+# hdb-job-0-compact-metadata directly after every deploy. Removed after that
+# job's orphan sweep (07_maintenance/compact_iceberg_metadata.py, PHASE 1)
+# deleted real tables it wrongly treated as orphans - it runs LIVE (no
+# --dry-run passed by the CI step) and calls _drop_iceberg_table() on
+# anything it decides doesn't match the live Glue Catalog, with no
+# confirmation step. Do not re-add an automatic trigger for this job until
+# that sweep logic itself is fixed/made safe - see the investigation this
+# caused on 2026-09-13. Use `aws glue start-job-run` or
+# `aws stepfunctions start-execution` MANUALLY, and only after reviewing
+# the orphan-sweep code path, if you need to run this job.
 
 on:
   push:
@@ -144,12 +147,3 @@ jobs:
             --role-arn "${STEPFUNCTIONS_ROLE_ARN}"
 
           rm -f "${DEFINITION_FILE}"
-
-      # Starts the freshly-deployed compact-metadata job directly via Glue
-      # (glue:StartJobRun - already granted to this role, see setup.sh's
-      # GHA_GLUE_SNS_POLICY). Deliberately NOT going through Step Functions:
-      # this does not chain on to raw/cleaned/transformed/hashed by itself.
-      - name: Start Glue job run
-        run: |
-          aws glue start-job-run \
-            --job-name "${GLUE_JOB_COMPACT}"
