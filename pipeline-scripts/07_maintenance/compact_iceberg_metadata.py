@@ -19,6 +19,12 @@ KNOWN_NON_ICEBERG_PREFIXES = {
     "hashed",
     "failed",
     "audit",
+    # Written by the Lambda's _persist_run_report/_save_alert_log (success and
+    # failure run logs). It's not an Iceberg table, so the orphan sweep below
+    # was treating it as an orphan and deleting it moments after every run's
+    # RecordRunSummary step wrote to it - which is why alert-logs/ was always
+    # empty by the time anyone checked.
+    "alert-logs",
 }
 
 def all_table_names() -> list:
@@ -67,15 +73,15 @@ def sweep_orphans(dry_run: bool) -> None:
         found_any_orphan = True
         for prefix in orphans:
             location = f"s3://{bucket}/{prefix}/"
-            if dry_run:
-                print(f"  [DRY RUN] would delete orphan: {location}")
-                continue
-            print(f"  Deleting orphan: {location}")
-            try:
-                _drop_iceberg_table(prefix, location)
-                print(f"    OK - S3 objects removed")
-            except Exception as exc:
-                print(f"    FAIL - {exc}")
+            # DELETION DISABLED 2026-09-13: this used to call _drop_iceberg_table()
+            # here (live, no confirmation) and deleted real tables/prefixes it
+            # wrongly flagged as orphans - including alert-logs/ despite the
+            # KNOWN_NON_ICEBERG_PREFIXES protection above, and, separately, real
+            # data during the incident investigated that day. Orphan detection
+            # is still useful as a report, so it stays - just log-only now.
+            # Review each line below manually; do not re-enable automatic
+            # deletion without first fixing whatever made these false positives.
+            print(f"  [ORPHAN - not deleted, review manually]: {location}")
 
     if not found_any_orphan:
         print("No orphans found anywhere - every bucket matches the live Glue Catalog exactly.")
