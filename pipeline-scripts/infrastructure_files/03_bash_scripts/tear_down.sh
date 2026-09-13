@@ -65,7 +65,6 @@ echo "HDB PIPELINE TEARDOWN"
 echo "============================================================"
 echo ""
 
-echo "AWS Account : ${ACCOUNT_ID}"
 echo "AWS Profile : ${AWS_PROFILE}"
 echo "AWS Region  : ${REGION}"
 echo "PROJECT_NAME: ${PROJECT_NAME}"
@@ -588,7 +587,6 @@ echo "  EventBridge Rule"
 echo "  Ingestion-Complete Trigger Rule"
 
 echo ""
-echo "AWS Account : ${ACCOUNT_ID}"
 echo "AWS Region  : ${REGION}"
 echo ""
 

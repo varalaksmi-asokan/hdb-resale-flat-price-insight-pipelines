@@ -115,7 +115,6 @@ echo "============================================================"
 echo "HDB EVENT-DRIVEN ICEBERG PIPELINE"
 echo "============================================================"
 echo ""
-echo "Project Directory : ${PROJECT_ROOT}"
 echo "AWS Profile       : ${AWS_PROFILE}"
 echo "AWS Region        : ${REGION}"
 echo ""
@@ -153,7 +152,6 @@ if [[ -z "${ACCOUNT_ID}" || "${ACCOUNT_ID}" == "None" ]]; then
     exit 1
 fi
 
-echo "AWS Account       : ${ACCOUNT_ID}"
 echo "AWS Region        : ${REGION}"
 echo ""
 
@@ -1645,10 +1643,6 @@ echo ""
 echo "============================================================"
 echo "SETUP COMPLETED SUCCESSFULLY"
 echo "============================================================"
-
-echo ""
-echo "AWS Account:"
-echo "  ${ACCOUNT_ID}"
 
 echo ""
 echo "AWS Region:"
