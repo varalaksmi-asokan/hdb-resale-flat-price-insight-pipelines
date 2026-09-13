@@ -29,7 +29,17 @@ env:
   AWS_REGION: us-east-1
   AWS_ACCOUNT_ID: "544795558120"
   PROJECT_NAME: hdb-eventdriven
-  PIPELINE_BUCKET: mission-hdb-eventdriven-544795558120-pipeline-scripts
+  # All names below follow the exact deterministic convention setup.sh
+  # uses (mission-<project>-<account_id>-<suffix>, etc.) - adjust here if
+  # PROJECT_NAME/AWS_REGION were overridden when setup.sh was last run.
+  #
+  # PIPELINE_BUCKET and the IAM role ARN are NOT hardcoded here - this repo
+  # already had two secrets set (Settings -> Secrets and variables ->
+  # Actions -> Secrets) from an earlier setup pass: AWS_ROLE_ARN and
+  # PIPELINE_BUCKET. The workflow-level `env:` block can't read the
+  # `secrets` context, so PIPELINE_BUCKET is set instead under
+  # `jobs.deploy.env` below, and AWS_ROLE_ARN is referenced directly in
+  # the "Configure AWS credentials" step's `role-to-assume`.
   PIPELINE_PREFIX: python-scripts
   AUDIT_BUCKET: mission-hdb-eventdriven-544795558120-audit-tables
   STATE_MACHINE_NAME: hdb-eventdriven-pipeline
@@ -42,16 +52,30 @@ env:
   GLUE_JOB_3: hdb-job-3-cleaned-iceberg
   GLUE_JOB_4: hdb-job-4-transformed-iceberg
   GLUE_JOB_5: hdb-job-5-hashed-iceberg
+  # Plain SNS text alerts by default (matches current setup.sh config).
+  # To switch to formatted SES emails, set these as repo Variables
+  # (Settings -> Secrets and variables -> Actions -> Variables) and
+  # reference them below as ${{ vars.ALERT_RECIPIENT_EMAILS }} / SES_SENDER_EMAIL.
   SES_RECIPIENT_EMAILS: ""
   SES_SENDER_EMAIL: ""
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      # Job-level env (unlike the workflow-level env: block above) can read
+      # the secrets context, so this pulls the real bucket name from the
+      # repo secret instead of a literal here.
+      PIPELINE_BUCKET: ${{ secrets.PIPELINE_BUCKET }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Debug: prints ONLY the sub/aud/repository/ref claims from GitHub's
+      # OIDC token - never the raw signed token itself - so we can see
+      # exactly what value AWS is comparing against the IAM trust policy's
+      # StringEqualsIgnoreCase condition. Safe to leave in; remove once the
+      # AssumeRoleWithWebIdentity failure is resolved.
       - name: Debug OIDC token claims
         run: |
           RESPONSE="$(curl -sS -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
@@ -71,7 +95,7 @@ jobs:
       - name: Configure AWS credentials (OIDC, no long-lived keys)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/hdb-pipeline-github-actions
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Sync pipeline-scripts to S3
