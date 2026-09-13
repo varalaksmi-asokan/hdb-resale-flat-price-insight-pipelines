@@ -255,6 +255,14 @@ create_prefix() {
 
 create_prefix "${SOURCE_BUCKET}" "${SOURCE_MANUAL_UPLOAD_PREFIX}/"
 
+# Pre-create the alert-logs/ folders in the audit bucket so they're visible
+# in the console right away. NOTE: this is cosmetic only - S3 has no real
+# folders, and put_object never needs a prefix to pre-exist, so this does
+# NOT fix (and was never the cause of) the Lambda's per-run alert-logs
+# writes not landing. It just makes the empty folder show up ahead of time.
+create_prefix "${AUDIT_BUCKET}" "alert-logs/success/"
+create_prefix "${AUDIT_BUCKET}" "alert-logs/failure/"
+
 if [[ ! -d "${PIPELINE_SOURCE_DIRECTORY}" ]]; then
 
     echo "ERROR: Pipeline scripts directory not found:"
@@ -803,6 +811,12 @@ aws iam put-role-policy \
     --policy-document "${GHA_GLUE_SNS_POLICY}" \
     >/dev/null
 
+# states:UpdateStateMachine requires the caller to also be able to pass the
+# state machine's execution role to the Step Functions service - without the
+# iam:PassRole statement below, this same CI role hits AccessDeniedException
+# on iam:PassRole even though it's separately allowed to call
+# UpdateStateMachine itself. Scoped via iam:PassedToService so this role can
+# only hand that one role to Step Functions, not to anything else.
 GHA_STEPFUNCTIONS_POLICY="$(
     cat <<JSON
 {
@@ -815,6 +829,16 @@ GHA_STEPFUNCTIONS_POLICY="$(
         "states:UpdateStateMachine"
       ],
       "Resource": "arn:aws:states:${REGION}:${ACCOUNT_ID}:stateMachine:${STATE_MACHINE_NAME}"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::${ACCOUNT_ID}:role/${STEPFUNCTIONS_ROLE_NAME}",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "states.amazonaws.com"
+        }
+      }
     }
   ]
 }
