@@ -817,6 +817,11 @@ aws iam put-role-policy \
 # on iam:PassRole even though it's separately allowed to call
 # UpdateStateMachine itself. Scoped via iam:PassedToService so this role can
 # only hand that one role to Step Functions, not to anything else.
+#
+# NOTE: no states:StartExecution here - the deploy workflow starts a single
+# Glue job directly (glue:StartJobRun, already granted below via
+# GHA_GLUE_SNS_POLICY) rather than running the full state-machine-orchestrated
+# pipeline, so this role never needs to start an execution.
 GHA_STEPFUNCTIONS_POLICY="$(
     cat <<JSON
 {
